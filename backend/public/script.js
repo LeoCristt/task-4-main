@@ -86,3 +86,49 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchCategories();
     fetchProducts();
 });
+
+const messagesDiv = document.getElementById('messages');
+const messageInput = document.getElementById('messageInput');
+const sendButton = document.getElementById('sendButton');
+let userNumber = null;
+
+const socket = new WebSocket('ws://localhost:3001');
+
+socket.onopen = () => {
+    console.log("Подключение установлено");
+};
+
+socket.onmessage = (event) => {
+    const { user, text } = JSON.parse(event.data);
+    const message = document.createElement('p');
+    message.innerHTML = `<strong>${user}:</strong> ${text}`;
+    message.className = "p-2 bg-gray-200 rounded mb-1";
+    messagesDiv.append(message);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+};
+
+sendButton.addEventListener('click', () => {
+    sendMessage();
+});
+
+messageInput.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+        sendMessage();
+    }
+});
+
+function sendMessage() {
+    const message = messageInput.value.trim();
+    if (message) {
+        socket.send(message);
+        messageInput.value = '';
+    }
+}
+
+function sendMessage() {
+    const message = messageInput.value.trim();
+    if (message) {
+        socket.send(message);
+        messageInput.value = '';
+    }
+}
