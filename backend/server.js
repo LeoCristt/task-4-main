@@ -4,7 +4,8 @@ const path = require("path");
 const cors = require("cors");
 const { graphqlHTTP } = require("express-graphql");
 const { buildSchema } = require("graphql");
-
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 
 const app = express();
 const PORT = 3000;
@@ -169,3 +170,31 @@ console.log('Сервер запущен на http://localhost:3001');
 
 
 console.log('Сервер запущен на http://localhost:3001');
+
+
+const swaggerOptions = {
+  swaggerDefinition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Product API with WebSocket Chat",
+      description: "API для управления товарами и чат на WebSocket",
+      version: "1.0.0",
+    },
+    servers: [
+      {
+        url: "http://localhost:3000",
+        description: "Development Server",
+      },
+      {
+        url: "ws://localhost:3001",
+        description: "WebSocket Server",
+      },
+    ],
+  },
+  apis: ["./swagger.yaml"], // Подключаем файл YAML, если есть
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+console.log("Swagger UI доступен по адресу: http://localhost:3000/api-docs");
